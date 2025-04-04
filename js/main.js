@@ -65,7 +65,7 @@ const carWhell=dashboard.newSteeringWheel({
     x:1700,
     y:700,
     size:70,
-    angle:-450,
+    angle:0,
 });
 
 const compass=dashboard.newCompass({
@@ -119,24 +119,180 @@ const soundTest3=dashboard.newButton({
     }
 });
 
-let add=true;
-let loop=setInterval(()=>{
-    if(add){
-        speed.value++;
-        bettery.value-=2;
-        carWhell.angle+=21;
-        compass.angle+=7.2;
-        if(speed.value>=50){
-            add=!add;
-        }
-    }else{
-        speed.value--;
-        bettery.value+=2;
-        carWhell.angle-=21;
-        compass.angle-=7.2;
-        if(speed.value<=0){
-            add=!add;
-        }
-    }
-    led.value=add;
-},50);
+
+// Connecting to ROS
+// -----------------
+
+var ros = new ROSLIB.Ros({
+    url : 'ws://localhost:9090'
+});
+
+ros.on('connection', function() {
+    console.log('Connected to websocket server.');
+});
+
+ros.on('error', function(error) {
+    console.log('Error connecting to websocket server: ', error);
+});
+
+ros.on('close', function() {
+    console.log('Connection to websocket server closed.');
+});
+
+
+// Publishing a Topic
+// ------------------
+
+var cmdVel = new ROSLIB.Topic({
+    ros : ros,
+    name : '/turtle1/cmd_vel',
+    messageType : 'geometry_msgs/Twist'
+});
+
+const forward=dashboard.newButton({
+    x:1035,
+    y:810,
+    text:'',
+    height:50,
+    width:50,
+    onclick:()=>{
+        var twist = new ROSLIB.Message({
+            linear : {
+                x : 2,
+                y : 0,
+            },
+            angular : {
+                z : 0
+            }
+        });
+        cmdVel.publish(twist);
+    },
+});
+const back=dashboard.newButton({
+    x:1035,
+    y:865,
+    text:'',
+    height:50,
+    width:50,
+    onclick:()=>{
+        var twist = new ROSLIB.Message({
+            linear : {
+                x : -1,
+                y : 0,
+            },
+            angular : {
+                z : 0
+            }
+        });
+        cmdVel.publish(twist);
+    },
+});
+const right=dashboard.newButton({
+    x:1090,
+    y:865,
+    text:'',
+    height:50,
+    width:50,
+    onclick:()=>{
+        var twist = new ROSLIB.Message({
+            linear : {
+                x : 0,
+                y : 0,
+            },
+            angular : {
+                z : -90*(Math.PI/180)
+            }
+        });
+        cmdVel.publish(twist);
+    },
+});
+const left=dashboard.newButton({
+    x:980,
+    y:865,
+    text:'',
+    height:50,
+    width:50,
+    onclick:()=>{
+        var twist = new ROSLIB.Message({
+            linear : {
+                x : 0,
+                y : 0,
+            },
+            angular : {
+                z : 90*(Math.PI/180)
+            }
+        });
+        cmdVel.publish(twist);
+    },
+});
+
+// Subscribing to a Topic
+// ----------------------
+
+var listener = new ROSLIB.Topic({
+    ros : ros,
+    name : '/turtle1/pose',
+    messageType : 'turtlesim/Pose'
+});
+
+listener.subscribe(function(message) {
+    speed.value=message.linear_velocity*10;
+    carWhell.angle=-message.angular_velocity*(180/Math.PI);
+    // listener.unsubscribe();
+});
+
+// Calling a service
+// -----------------
+
+var resetTurtle = new ROSLIB.Service({
+    ros : ros,
+    name : '/reset',
+    serviceType : 'std_srvs/Empty'
+});
+
+const resetBT=dashboard.newButton({
+    x:1010,
+    y:600,
+    height:50,
+    width:150,
+    text:'Reset',
+    onclick:()=>{
+        var request = new ROSLIB.ServiceRequest({});
+
+        resetTurtle.callService(request, function(result) {
+            console.log(`Result for service call on ${resetTurtle.name} : ${result.sum}`);
+        });
+
+        
+        RedValue.set(Math.floor(Math.random()*256));
+        GreenValue.set(Math.floor(Math.random()*256));
+        BlueValue.set(Math.floor(Math.random()*256));
+    },
+});
+
+// Getting and setting a param value
+// ---------------------------------
+
+// ros.getParams(function(params) {
+//     console.log(params);
+// });
+
+var RedValue = new ROSLIB.Param({
+    ros : ros,
+    name : '/turtlesim/background_r'
+});
+var GreenValue = new ROSLIB.Param({
+    ros : ros,
+    name : '/turtlesim/background_g'
+});
+var BlueValue = new ROSLIB.Param({
+    ros : ros,
+    name : '/turtlesim/background_b'
+});
+
+RedValue.set(Math.floor(Math.random()*256));
+GreenValue.set(Math.floor(Math.random()*256));
+BlueValue.set(Math.floor(Math.random()*256));
+// BlueValue.get(function(value) {
+//     console.log('Blue Value: ' + value);
+// });

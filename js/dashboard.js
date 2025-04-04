@@ -128,17 +128,27 @@ class Dashboard{
                                     ctx.font=`${Math.round(25*(item.radius/200))}px sans-serif`;
                                     ctx.fillText(text.toString(),(item.radius*1.1)*cos+item.x,(item.radius*1.1)*sin+item.y);
                                 }
+
+                                item.buffer.push(item.value);
+                                if(item.buffer.length>item.maxBuffer){
+                                    item.buffer=item.buffer.slice(1);
+                                }
+                                let sum=0;
+                                for(let i=0;i<item.buffer.length;i++){
+                                    sum+=item.buffer[i];
+                                }
+                                const value=Math.round(sum/item.buffer.length);
                                 ctx.stroke();
                                 if(item.style===1){
                                     ctx.strokeStyle=item.color[1][item.color[1].length-1];
                                     for(let i=item.color[0].length-1;i>0;i--){
-                                        if((((item.value-item.min)/(item.max-item.min))*100)<item.color[0][i]){
+                                        if((((value-item.min)/(item.max-item.min))*100)<item.color[0][i]){
                                             ctx.strokeStyle=item.color[1][i-1]??' #ff0000';
                                         }
                                     }
                                     ctx.lineWidth=item.barLineWidth;
                                     ctx.beginPath();
-                                    const angle=((item.value-item.min)/(item.max-item.min))*((item.maxAngle-item.minAngle+720)%360)+item.minAngle;
+                                    const angle=((value-item.min)/(item.max-item.min))*((item.maxAngle-item.minAngle+720)%360)+item.minAngle;
                                     const sin=Math.sin(angle*(Math.PI/180));
                                     const cos=Math.cos(angle*(Math.PI/180));
                                     ctx.moveTo((item.radius*item.splitWidth)*cos+item.x,(item.radius*item.splitWidth)*sin+item.y);
@@ -150,7 +160,7 @@ class Dashboard{
                                     let colorIndex=0;
                                     ctx.lineWidth=1;
                                     for(let i=item.min+1;i<=item.max;i++){
-                                        if(item.value>=i){
+                                        if(value>=i){
                                             drawChunk(item.minAngle+chunkAngle*(i-item.min-1),item.minAngle+chunkAngle*(i-item.min),item.color[1][colorIndex]??' #ff0000');
                                         }
                                         if(((colorIndex)<item.color[0].length)&&(((i-item.min)/(item.max-item.min))*100)>=item.color[0][colorIndex]){
@@ -175,14 +185,6 @@ class Dashboard{
                                     ctx.fill();
                                 }
 
-                                item.buffer.push(item.value);
-                                if(item.buffer.length>item.maxBuffer){
-                                    item.buffer=item.buffer.slice(1);
-                                }
-                                let sum=0;
-                                for(let i=0;i<item.buffer.length;i++){
-                                    sum+=item.buffer[i];
-                                }
                                 ctx.fillStyle=' #ffffff';
                                 ctx.textBaseline='middle';
                                 ctx.textAlign='center';
@@ -205,9 +207,19 @@ class Dashboard{
                                     ctx.beginPath();
                                     const colorList=item.color[0].concat([100]).map(i=>((i/100)*(item.max-item.min)+item.min));
                                     let lastHeight=item.min;
+
+                                    item.buffer.push(item.value);
+                                    if(item.buffer.length>item.maxBuffer){
+                                        item.buffer=item.buffer.slice(1);
+                                    }
+                                    let sum=0;
+                                    for(let i=0;i<item.buffer.length;i++){
+                                        sum+=item.buffer[i];
+                                    }
+                                    const value=Math.round(sum/item.buffer.length);
                                     if(item.color[2]){
                                         for(let i=0;i<colorList.length;i++){
-                                            if(item.value<colorList[i]){
+                                            if(value<colorList[i]){
                                                 ctx.fillStyle=item.color[1][i];
                                                 break;
                                             }
@@ -217,8 +229,8 @@ class Dashboard{
                                         if(!item.color[2]){
                                             ctx.fillStyle=item.color[1][i];
                                         }
-                                        if(item.value<colorList[i]){
-                                            ctx.fillRect(item.x,item.y+(1-(item.value-item.min)/(item.max-item.min))*item.height,item.width,((item.value-lastHeight)/(item.max-item.min))*item.height);
+                                        if(value<colorList[i]){
+                                            ctx.fillRect(item.x,item.y+(1-(value-item.min)/(item.max-item.min))*item.height,item.width,((value-lastHeight)/(item.max-item.min))*item.height);
                                             break;
                                         }else{
                                             ctx.fillRect(item.x,item.y+(1-(colorList[i]-item.min)/(item.max-item.min))*item.height,item.width,((colorList[i]-lastHeight)/(item.max-item.min))*item.height);
@@ -293,11 +305,22 @@ class Dashboard{
                         break;
                     }
                     case 'SteeringWheel':{
-                        const angle=270+item.angle;
+                        item.buffer.push(item.angle);
+                        if(item.buffer.length>item.maxBuffer){
+                            item.buffer=item.buffer.slice(1);
+                        }
+                        let sum=0;
+                        for(let i=0;i<item.buffer.length;i++){
+                            sum+=item.buffer[i];
+                        }
+                        const value=Math.round(sum/item.buffer.length);
+
+                        const angle=270+value;
                         const sin=(a)=>Math.sin(a*(Math.PI/180));
                         const cos=(a)=>Math.cos(a*(Math.PI/180));
                         ctx.strokeStyle=item.color[0]??' #ffffff';
                         ctx.fillStyle=item.color[0]??' #ffffff';
+                        
 
                         ctx.beginPath();
                         ctx.lineWidth=item.size*0.1;
@@ -326,13 +349,13 @@ class Dashboard{
 
                         ctx.beginPath();
                         ctx.lineWidth=(item.size*0.1);
-                        for(let i=0;i<Math.ceil(Math.abs(item.angle)/360);i++){
-                            ctx.arc(item.x,item.y,(item.size*1.2),-Math.PI/2,(item.angle-90)*(Math.PI/180),item.angle<0);
+                        for(let i=0;i<Math.ceil(Math.abs(value)/360);i++){
+                            ctx.arc(item.x,item.y,(item.size*1.2),-Math.PI/2,(value-90)*(Math.PI/180),value<0);
                             ctx.stroke();
                             ctx.beginPath();
                             ctx.strokeStyle=item.color[i]??`#${cyrb53(`${i}${i}${i}`).slice(0,6)}`;
                         }
-                        ctx.arc(item.x,item.y,(item.size*1.2),-Math.PI/2,(item.angle%360-90)*(Math.PI/180),item.angle<0);
+                        ctx.arc(item.x,item.y,(item.size*1.2),-Math.PI/2,(value%360-90)*(Math.PI/180),value<0);
                         ctx.stroke();
                         break;
                     }
@@ -581,6 +604,8 @@ class Dashboard{
             y:config.y??100,
             size:config.size??100,
             color:config.color??[' #ffffff','rgb(128, 128, 255)','rgb(255, 128, 128)'],
+            maxBuffer:config.maxBuffer??20,
+            buffer:[],
 
             angle:config.angle??0,
 
