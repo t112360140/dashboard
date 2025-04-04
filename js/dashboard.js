@@ -296,8 +296,8 @@ class Dashboard{
                         const angle=270+item.angle;
                         const sin=(a)=>Math.sin(a*(Math.PI/180));
                         const cos=(a)=>Math.cos(a*(Math.PI/180));
-                        ctx.strokeStyle=item.color[0];
-                        ctx.fillStyle=item.color[0];
+                        ctx.strokeStyle=item.color[0]??' #ffffff';
+                        ctx.fillStyle=item.color[0]??' #ffffff';
 
                         ctx.beginPath();
                         ctx.lineWidth=item.size*0.1;
@@ -330,7 +330,7 @@ class Dashboard{
                             ctx.arc(item.x,item.y,(item.size*1.2),-Math.PI/2,(item.angle-90)*(Math.PI/180),item.angle<0);
                             ctx.stroke();
                             ctx.beginPath();
-                            ctx.strokeStyle=item.color[i]??' #ff0000';
+                            ctx.strokeStyle=item.color[i]??`#${cyrb53(`${i}${i}${i}`).slice(0,6)}`;
                         }
                         ctx.arc(item.x,item.y,(item.size*1.2),-Math.PI/2,(item.angle%360-90)*(Math.PI/180),item.angle<0);
                         ctx.stroke();

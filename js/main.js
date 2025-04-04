@@ -90,7 +90,7 @@ const soundTest1=dashboard.newButton({
     text:'',
     onclick:()=>{
         let oldData=cloneJSON(carNear.data);
-        oldData[0]=(oldData[0]+3)%6;
+        oldData[0]=(oldData[0]+1)%6;
         carNear.updata(oldData);
     }
 });
@@ -102,7 +102,7 @@ const soundTest2=dashboard.newButton({
     text:'',
     onclick:()=>{
         let oldData=cloneJSON(carNear.data);
-        oldData[9]=(oldData[9]+3)%6;
+        oldData[9]=(oldData[9]+1)%6;
         carNear.updata(oldData);
     }
 });
@@ -114,7 +114,7 @@ const soundTest3=dashboard.newButton({
     text:'',
     onclick:()=>{
         let oldData=cloneJSON(carNear.data);
-        oldData[1]=(oldData[1]+3)%6;
+        oldData[1]=(oldData[1]+1)%6;
         carNear.updata(oldData);
     }
 });
