@@ -640,7 +640,7 @@ class Dashboard{
                         }
                     }
                 }
-                console.log(rightMax,leftMax)
+                // console.log(rightMax,leftMax)
                 if(rightMax<=0&&leftMax<=0){
                     this.sound.freq=-1;
                 }else{

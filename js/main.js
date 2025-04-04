@@ -82,6 +82,43 @@ const led=dashboard.newLED({
     offColor:' #00ff00'
 });
 
+const soundTest1=dashboard.newButton({
+    x:1375,
+    y:525,
+    height:50,
+    width:50,
+    text:'',
+    onclick:()=>{
+        let oldData=cloneJSON(carNear.data);
+        oldData[0]=(oldData[0]+3)%6;
+        carNear.updata(oldData);
+    }
+});
+const soundTest2=dashboard.newButton({
+    x:1245,
+    y:570,
+    height:50,
+    width:50,
+    text:'',
+    onclick:()=>{
+        let oldData=cloneJSON(carNear.data);
+        oldData[9]=(oldData[9]+3)%6;
+        carNear.updata(oldData);
+    }
+});
+const soundTest3=dashboard.newButton({
+    x:1525,
+    y:570,
+    height:50,
+    width:50,
+    text:'',
+    onclick:()=>{
+        let oldData=cloneJSON(carNear.data);
+        oldData[1]=(oldData[1]+3)%6;
+        carNear.updata(oldData);
+    }
+});
+
 let add=true;
 let loop=setInterval(()=>{
     if(add){
