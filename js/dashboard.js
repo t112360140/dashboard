@@ -429,7 +429,7 @@ class Dashboard{
             split:config.split??10,
             style:config.style??0,
             unit:config.unit??'',
-            maxBuffer:config.maxBuffer??20,
+            maxBuffer:config.maxBuffer??10,
             buffer:[],
 
             barWidth:config.barWidth??0.75,
@@ -467,7 +467,7 @@ class Dashboard{
             split:config.split??2,
             style:config.style??0,
             unit:config.unit??'',
-            maxBuffer:config.maxBuffer??20,
+            maxBuffer:config.maxBuffer??10,
             buffer:[],
 
             remove:()=>{
@@ -604,7 +604,7 @@ class Dashboard{
             y:config.y??100,
             size:config.size??100,
             color:config.color??[' #ffffff','rgb(128, 128, 255)','rgb(255, 128, 128)'],
-            maxBuffer:config.maxBuffer??20,
+            maxBuffer:config.maxBuffer??10,
             buffer:[],
 
             angle:config.angle??0,

@@ -74,12 +74,12 @@ const compass=dashboard.newCompass({
     size:70,
 });
 
-const led=dashboard.newLED({
+const connectState=dashboard.newLED({
     x:124,
     y:197,
     size:25,
-    onColor:' #ff0000',
-    offColor:' #00ff00'
+    onColor:' #00ff00',
+    offColor:' #ff0000'
 });
 
 const soundTest1=dashboard.newButton({
@@ -128,14 +128,17 @@ var ros = new ROSLIB.Ros({
 });
 
 ros.on('connection', function() {
+    connectState.value=true;
     console.log('Connected to websocket server.');
 });
 
 ros.on('error', function(error) {
+    connectState.value=false;
     console.log('Error connecting to websocket server: ', error);
 });
 
 ros.on('close', function() {
+    connectState.value=false;
     console.log('Connection to websocket server closed.');
 });
 
@@ -152,7 +155,7 @@ var cmdVel = new ROSLIB.Topic({
 const forward=dashboard.newButton({
     x:1035,
     y:810,
-    text:'',
+    text:'^',
     height:50,
     width:50,
     onclick:()=>{
@@ -171,7 +174,7 @@ const forward=dashboard.newButton({
 const back=dashboard.newButton({
     x:1035,
     y:865,
-    text:'',
+    text:'v',
     height:50,
     width:50,
     onclick:()=>{
@@ -190,7 +193,7 @@ const back=dashboard.newButton({
 const right=dashboard.newButton({
     x:1090,
     y:865,
-    text:'',
+    text:'>',
     height:50,
     width:50,
     onclick:()=>{
@@ -209,7 +212,7 @@ const right=dashboard.newButton({
 const left=dashboard.newButton({
     x:980,
     y:865,
-    text:'',
+    text:'<',
     height:50,
     width:50,
     onclick:()=>{
