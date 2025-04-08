@@ -10,7 +10,7 @@ const dashboard=new Dashboard(document.getElementById('dashboard'));
 //     width:1960,
 // });
 
-const ipSet=dashoard.newButton({
+const ipSet=dashboard.newButton({
     x:1835,
     y:80,
     text:'',
