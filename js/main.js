@@ -10,6 +10,21 @@ const dashboard=new Dashboard(document.getElementById('dashboard'));
 //     width:1960,
 // });
 
+const ipSet=dashoard.newButton({
+    x:1835,
+    y:80,
+    text:'',
+    height:50,width:50,
+    onclick:()=>{
+        const ip=prompt('New IP:');
+        if(ip){
+            ros = new ROSLIB.Ros({
+                url : `ws://${ip}:9090`
+            });
+        }
+    }
+});
+
 const fullScreen=dashboard.newButton({
     x:1950,
     y:0,
